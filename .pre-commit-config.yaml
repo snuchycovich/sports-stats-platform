@@ -1,0 +1,25 @@
+minimum_pre_commit_version: "4.4.0"
+
+repos:
+  - repo: local
+    hooks:
+      - id: web-lint
+        name: web lint
+        entry: npm --prefix apps/web run lint
+        language: unsupported
+        pass_filenames: false
+        files: ^apps/web/
+
+      - id: web-test
+        name: web tests
+        entry: npm --prefix apps/web run test
+        language: unsupported
+        pass_filenames: false
+        files: ^apps/web/
+
+      - id: web-build
+        name: web build
+        entry: npm --prefix apps/web run build
+        language: unsupported
+        pass_filenames: false
+        files: ^apps/web/

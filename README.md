@@ -29,3 +29,24 @@ The repository currently contains product and technical documentation only. No a
 - [Architecture decisions](docs/adr/ADR-001-choix-techniques-plateforme-statistiques.md)
 
 Start with the [first development slice](docs/getting-started.md). It proves preparation, offline capture, correction, synchronization, and duplicate-free statistics before expanding to a complete pilot.
+
+## Frontend development
+
+The initial React application lives in `apps/web` and requires Node.js 24 or newer.
+
+```bash
+cd apps/web
+npm ci
+npm run lint
+npm run test
+npm run build
+```
+
+The repository uses [pre-commit](https://pre-commit.com/) to run the same checks before a commit that changes frontend files. After installing `pre-commit`, enable the Git hook once per checkout:
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+GitHub Actions runs lint, tests, and the production build on pull requests and pushes to `main`.
