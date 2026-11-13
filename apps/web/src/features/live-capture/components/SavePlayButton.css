@@ -1,0 +1,53 @@
+.save-play-button {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 3rem;
+	margin-top: 0.75rem;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--text-h);
+	border-radius: 4px;
+	background: var(--text-h);
+	color: var(--bg);
+	font: inherit;
+	font-weight: 700;
+	line-height: 1.25;
+	cursor: pointer;
+	transition:
+		background-color 120ms ease,
+		border-color 120ms ease,
+		color 120ms ease;
+}
+
+.save-play-button:hover:not(:disabled) {
+	border-color: var(--accent);
+	background: var(--accent);
+}
+
+.save-play-button:focus-visible {
+	outline: 3px solid var(--accent-border);
+	outline-offset: 3px;
+}
+
+.save-play-button:disabled {
+	border-color: var(--border);
+	background: var(--code-bg);
+	color: var(--text);
+	cursor: not-allowed;
+}
+
+.save-play-button:active:not(:disabled) {
+	transform: translateY(1px);
+}
+
+@media (min-width: 768px) {
+	.save-play-button {
+		width: auto;
+		min-width: 12rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.save-play-button {
+		transition: none;
+	}
+}

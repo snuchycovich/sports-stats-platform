@@ -1,0 +1,69 @@
+.play-action-pad {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.play-action-pad__heading {
+  margin: 0 0 0.75rem;
+  color: var(--text-h);
+  font-size: 1.125rem;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.play-action-pad__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.play-action-pad__button {
+  min-width: 0;
+  min-height: 3.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.play-action-pad__button:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.play-action-pad__button:focus-visible {
+  outline: 3px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+.play-action-pad__button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+@media (min-width: 768px) {
+  .play-action-pad__actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-action-pad__button {
+    transition: none;
+  }
+}
