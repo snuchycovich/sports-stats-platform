@@ -1,0 +1,109 @@
+name: Implementation task
+description: Define a small, testable implementation task
+title: ""
+labels:
+  - task
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome should this task achieve, and why is it useful?
+      placeholder: Allow an operator to capture and validate a rushing play.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Relevant product, domain, or technical context.
+      placeholder: |
+        Relevant documentation:
+        - docs/getting-started.md
+        - docs/technical/domain-model.md
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Architecture
+        - Web
+        - Domain
+        - Contracts
+        - API
+        - Database
+        - Testing
+        - Documentation
+        - CI/CD
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Describe what must be implemented.
+      placeholder: |
+        - Add the Rush action to Live Capture.
+        - Validate the ball carrier and yards.
+        - Save valid observations locally.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Subtasks
+      description: Break the work into small implementation steps.
+      value: |
+        - [ ] 
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Define observable and testable completion conditions.
+      value: |
+        - [ ] 
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Required tests
+      description: List the automated or manual checks required.
+      value: |
+        - [ ] Unit tests
+        - [ ] Integration or component tests when applicable
+        - [ ] Lint, type-check, and build pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: Explicitly identify work that must not be included.
+      placeholder: API synchronization and PostgreSQL persistence are not included.
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List blocking issues or write "None".
+      placeholder: "Blocked by #12"
+    validations:
+      required: false
