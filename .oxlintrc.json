@@ -64,6 +64,13 @@
       "rules": {
         "typescript/consistent-type-imports": "off"
       }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "plugins": ["typescript", "unicorn", "oxc", "vitest"],
+      "rules": {
+        "vitest/no-focused-tests": "error"
+      }
     }
   ]
 }

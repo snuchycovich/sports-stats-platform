@@ -15,5 +15,8 @@
   "dependencies": {
     "@stats/contracts": "workspace:*",
     "@stats/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6"
   }
 }
