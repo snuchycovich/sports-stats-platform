@@ -2,7 +2,7 @@
 
 A statistics platform for tackle American football and flag football. Statisticians record each play once, even without a network, so the paper-to-digital double entry disappears. Corrections are preserved, and trustworthy statistics are rebuilt from the play log.
 
-> **Status: scaffold only.** This repository contains the pnpm workspace layout and empty package entry points. No application, domain logic, tests, database, or product features are implemented yet. The root scripts run, but they currently do nothing because no workspace defines a `build`, `test`, `lint`, or `typecheck` script.
+> **Status: scaffold only.** This repository contains the pnpm workspace layout and empty package entry points. No application, domain logic, tests, database, or product features are implemented yet. Strict TypeScript type checking is configured. The `build`, `test`, and `lint` root scripts run, but they currently do nothing because no workspace defines those scripts.
 
 ## Prerequisites
 
@@ -24,7 +24,10 @@ pnpm build
 pnpm test
 pnpm lint
 pnpm typecheck
+pnpm check:boundaries
 ```
+
+`pnpm typecheck` runs `tsc` with the strict shared configuration in every workspace. `pnpm check:boundaries` injects temporary invalid imports (for example `react` or an app import inside `packages/domain`) and confirms that type checking rejects them, and that the allowed app-to-package imports still pass.
 
 ## Repository structure
 
@@ -42,7 +45,7 @@ pnpm typecheck
 └── pnpm-workspace.yaml
 ```
 
-Each workspace currently contains only a `package.json` and an empty `src/index.ts`.
+Each workspace currently contains only a `package.json`, a `tsconfig.json`, and an empty `src/index.ts`. Shared TypeScript settings live in `tsconfig.base.json`, extended by `tsconfig.lib.json`, `tsconfig.web.json`, and `tsconfig.api.json`.
 
 | Workspace | Intended responsibility |
 | --- | --- |

@@ -6,6 +6,10 @@
     "build": "pnpm -r --if-present run build",
     "test": "pnpm -r --if-present run test",
     "lint": "pnpm -r --if-present run lint",
-    "typecheck": "pnpm -r --if-present run typecheck"
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "check:boundaries": "node scripts/check-boundaries.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
   }
 }
