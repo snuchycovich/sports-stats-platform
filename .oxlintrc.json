@@ -1,0 +1,69 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "settings": {
+    "react": {
+      "version": "19"
+    }
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.vite/**",
+    "**/playwright-report/**",
+    "**/test-results/**"
+  ],
+  "overrides": [
+    {
+      "files": ["scripts/**/*.mjs"],
+      "env": {
+        "node": true
+      }
+    },
+    {
+      "files": ["packages/domain/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["react", "react-dom", "react/*", "react-dom/*", "@nestjs/*"],
+                "message": "packages/domain must not import UI or server frameworks."
+              },
+              {
+                "group": ["node:*", "@stats/web", "@stats/api"],
+                "message": "packages/domain must not import Node built-ins or applications."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["apps/web/**/*.{ts,tsx}"],
+      "plugins": ["typescript", "unicorn", "oxc", "react"],
+      "env": {
+        "browser": true
+      },
+      "rules": {
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn"
+      }
+    },
+    {
+      "files": ["apps/api/**/*.ts"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "typescript/consistent-type-imports": "off"
+      }
+    }
+  ]
+}
