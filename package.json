@@ -9,6 +9,7 @@
     "format:check": "oxfmt --check",
     "typecheck": "pnpm -r --if-present run typecheck",
     "knip": "knip",
+    "audit:deps": "pnpm audit --audit-level=high",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:quality": "node scripts/check-quality.mjs",
     "prepare": "lefthook install"
