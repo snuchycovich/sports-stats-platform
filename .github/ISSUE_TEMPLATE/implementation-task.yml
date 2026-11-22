@@ -1,6 +1,6 @@
 name: Implementation task
 description: Define a small, testable implementation task
-title: ""
+title: "[task] "
 labels:
   - task
 body:
