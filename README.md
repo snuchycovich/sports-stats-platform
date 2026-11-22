@@ -2,7 +2,7 @@
 
 A statistics platform for tackle American football and flag football. Statisticians record each play once, even without a network, so the paper-to-digital double entry disappears. Corrections are preserved, and trustworthy statistics are rebuilt from the play log.
 
-> **Status: scaffold only.** This repository contains the pnpm workspace layout and empty package entry points. No application, domain logic, tests, database, or product features are implemented yet. Strict TypeScript type checking is configured. The `build`, `test`, and `lint` root scripts run, but they currently do nothing because no workspace defines those scripts.
+> **Status: scaffold only.** This repository contains the pnpm workspace layout and empty package entry points. No application, domain logic, tests, database, or product features are implemented yet. Strict TypeScript type checking, Oxlint, Oxfmt, Knip, and a Lefthook pre-commit hook are configured. The `build` and `test` root scripts run, but they currently do nothing because no workspace defines those scripts.
 
 ## Prerequisites
 
@@ -17,17 +17,31 @@ pnpm install
 
 ## Commands
 
-Run these from the repository root. Each one runs the matching script in every workspace that defines it, and skips the rest.
+Run these from the repository root.
 
 ```sh
 pnpm build
 pnpm test
 pnpm lint
+pnpm format:check
+pnpm format
+pnpm knip
 pnpm typecheck
 pnpm check:boundaries
+pnpm check:quality
 ```
 
-`pnpm typecheck` runs `tsc` with the strict shared configuration in every workspace. `pnpm check:boundaries` injects temporary invalid imports (for example `react` or an app import inside `packages/domain`) and confirms that type checking rejects them, and that the allowed app-to-package imports still pass.
+- `pnpm build` and `pnpm test` run the matching script in every workspace that defines it, and skip the rest.
+- `pnpm lint` runs Oxlint on the whole repository with one root configuration (`.oxlintrc.json`, `correctness` rules as errors), including React rules for `apps/web`, Node rules for `apps/api`, and import restrictions for `packages/domain`.
+- `pnpm format:check` verifies Oxfmt formatting without modifying files. `pnpm format` rewrites files. `docs/` and `.github/` are not formatted.
+- `pnpm knip` reports unused files, exports, and dependencies. The `@stats/*` workspace dependencies are ignored for now because the scaffold does not import them yet.
+- `pnpm typecheck` runs `tsc` with the strict shared configuration in every workspace.
+- `pnpm check:boundaries` injects temporary invalid imports (for example `react` or an app import inside `packages/domain`) and confirms that type checking rejects them, and that the allowed app-to-package imports still pass.
+- `pnpm check:quality` injects temporary invalid and badly formatted code and confirms that Oxlint and Oxfmt reject it, and that valid code passes.
+
+## Pre-commit hook
+
+`pnpm install` installs a Lefthook `pre-commit` hook (`lefthook.yml`) through the `prepare` script. On every commit it runs Oxfmt and Oxlint on the staged files, then type checking and Knip on the whole repository. A failing check blocks the commit.
 
 ## Repository structure
 
@@ -47,13 +61,13 @@ pnpm check:boundaries
 
 Each workspace currently contains only a `package.json`, a `tsconfig.json`, and an empty `src/index.ts`. Shared TypeScript settings live in `tsconfig.base.json`, extended by `tsconfig.lib.json`, `tsconfig.web.json`, and `tsconfig.api.json`.
 
-| Workspace | Intended responsibility |
-| --- | --- |
-| `apps/web` | Capture and review client (planned: React and Vite PWA) |
-| `apps/api` | Server application (planned: NestJS with PostgreSQL) |
-| `packages/domain` | Pure TypeScript domain engine shared by browser and server |
-| `packages/contracts` | Runtime-validated command and payload contracts |
-| `packages/test-fixtures` | Shared reference games and test data |
+| Workspace                | Intended responsibility                                    |
+| ------------------------ | ---------------------------------------------------------- |
+| `apps/web`               | Capture and review client (planned: React and Vite PWA)    |
+| `apps/api`               | Server application (planned: NestJS with PostgreSQL)       |
+| `packages/domain`        | Pure TypeScript domain engine shared by browser and server |
+| `packages/contracts`     | Runtime-validated command and payload contracts            |
+| `packages/test-fixtures` | Shared reference games and test data                       |
 
 Both apps depend on `@stats/domain` and `@stats/contracts`, and `@stats/test-fixtures` depends on both packages, using `workspace:*`.
 

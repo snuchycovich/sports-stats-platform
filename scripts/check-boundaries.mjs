@@ -10,14 +10,25 @@ const cases = [
   { workspace: "packages/domain", source: 'import "react";', reject: "react" },
   { workspace: "packages/domain", source: 'import "@nestjs/common";', reject: "@nestjs/common" },
   { workspace: "packages/domain", source: 'import "@stats/web";', reject: "@stats/web" },
-  { workspace: "packages/domain", source: 'import "@stats/contracts";', reject: "@stats/contracts" },
+  {
+    workspace: "packages/domain",
+    source: 'import "@stats/contracts";',
+    reject: "@stats/contracts",
+  },
   { workspace: "packages/domain", source: 'import "node:fs";', reject: "node:fs" },
-  { workspace: "packages/domain", source: "export const now = document.title;", reject: "document" },
+  {
+    workspace: "packages/domain",
+    source: "export const now = document.title;",
+    reject: "document",
+  },
   { workspace: "packages/contracts", source: 'import "@stats/api";', reject: "@stats/api" },
   { workspace: "packages/test-fixtures", source: 'import "@stats/web";', reject: "@stats/web" },
   { workspace: "apps/web", source: 'import "@stats/domain";\nimport "@stats/contracts";' },
   { workspace: "apps/api", source: 'import "@stats/domain";\nimport "@stats/contracts";' },
-  { workspace: "packages/test-fixtures", source: 'import "@stats/domain";\nimport "@stats/contracts";' },
+  {
+    workspace: "packages/test-fixtures",
+    source: 'import "@stats/domain";\nimport "@stats/contracts";',
+  },
 ];
 
 let failures = 0;
@@ -31,9 +42,12 @@ for (const { workspace, source, reject } of cases) {
       encoding: "utf8",
     });
     const output = `${result.stdout}${result.stderr}`;
-    const rejected = result.status !== 0 && output.includes("__boundary_probe__") && output.includes(reject ?? "");
+    const rejected =
+      result.status !== 0 && output.includes("__boundary_probe__") && output.includes(reject ?? "");
     const ok = reject === undefined ? result.status === 0 : rejected;
-    console.log(`${ok ? "ok  " : "FAIL"} ${reject === undefined ? "accepted" : "rejected"} ${label}`);
+    console.log(
+      `${ok ? "ok  " : "FAIL"} ${reject === undefined ? "accepted" : "rejected"} ${label}`,
+    );
     if (!ok) {
       failures += 1;
       console.log(output.trim());
