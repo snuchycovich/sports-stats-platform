@@ -26,6 +26,7 @@ pnpm lint
 pnpm format:check
 pnpm format
 pnpm knip
+pnpm audit:deps
 pnpm typecheck
 pnpm check:boundaries
 pnpm check:quality
@@ -35,6 +36,7 @@ pnpm check:quality
 - `pnpm lint` runs Oxlint on the whole repository with one root configuration (`.oxlintrc.json`, `correctness` rules as errors), including React rules for `apps/web`, Node rules for `apps/api`, and import restrictions for `packages/domain`.
 - `pnpm format:check` verifies Oxfmt formatting without modifying files. `pnpm format` rewrites files. `docs/` and `.github/` are not formatted.
 - `pnpm knip` reports unused files, exports, and dependencies. The `@stats/*` workspace dependencies are ignored for now because the scaffold does not import them yet.
+- `pnpm audit:deps` audits all dependencies, including devDependencies, against the npm advisory database and fails on high or critical vulnerabilities. It needs network access and is not part of the pre-commit hook.
 - `pnpm typecheck` runs `tsc` with the strict shared configuration in every workspace.
 - `pnpm check:boundaries` injects temporary invalid imports (for example `react` or an app import inside `packages/domain`) and confirms that type checking rejects them, and that the allowed app-to-package imports still pass.
 - `pnpm check:quality` injects temporary invalid and badly formatted code and confirms that Oxlint and Oxfmt reject it, and that valid code passes.
@@ -42,6 +44,10 @@ pnpm check:quality
 ## Pre-commit hook
 
 `pnpm install` installs a Lefthook `pre-commit` hook (`lefthook.yml`) through the `prepare` script. On every commit it runs Oxfmt and Oxlint on the staged files, then type checking and Knip on the whole repository. A failing check blocks the commit.
+
+## Dependency updates
+
+Dependabot (`.github/dependabot.yml`) opens a grouped pull request for minor and patch updates every Monday, for npm dependencies and GitHub Actions. Major updates arrive as separate pull requests. Dependabot alerts and security updates are enabled for the repository.
 
 ## Repository structure
 
