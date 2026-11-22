@@ -54,6 +54,19 @@ pnpm check:quality
 
 `pnpm install` installs a Lefthook `pre-commit` hook (`lefthook.yml`) through the `prepare` script. On every commit it runs Oxfmt and Oxlint on the staged files, then type checking and Knip on the whole repository. A failing check blocks the commit.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request to `dev` and `main`. It installs dependencies from the lockfile and runs these jobs in parallel:
+
+- `quality`: formatting, lint, type check, boundary checks, quality checks, and Knip.
+- `test`: unit and API integration tests.
+- `e2e`: Playwright end-to-end tests in Chromium.
+- `build`: all workspace builds.
+- `audit`: the dependency vulnerability audit.
+- `ci`: a single result that fails when any job above fails, is cancelled, or is skipped. Use this as the required status check.
+
+Third-party actions are pinned to full commit SHAs, and Dependabot keeps them up to date. The shared setup steps (pnpm, Node.js 24, cached install) live in `.github/actions/setup`.
+
 ## Dependency updates
 
 Dependabot (`.github/dependabot.yml`) opens a grouped pull request for minor and patch updates every Monday, for npm dependencies and GitHub Actions. Major updates arrive as separate pull requests. Dependabot alerts and security updates are enabled for the repository.
