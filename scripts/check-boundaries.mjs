@@ -6,28 +6,31 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const tsc = join(root, "node_modules", ".bin", "tsc");
 
+const DOMAIN = "packages/domain";
+const SHARED_IMPORTS = 'import "@stats/domain";\nimport "@stats/contracts";';
+
 const cases = [
-  { workspace: "packages/domain", source: 'import "react";', reject: "react" },
-  { workspace: "packages/domain", source: 'import "@nestjs/common";', reject: "@nestjs/common" },
-  { workspace: "packages/domain", source: 'import "@stats/web";', reject: "@stats/web" },
+  { workspace: DOMAIN, source: 'import "react";', reject: "react" },
+  { workspace: DOMAIN, source: 'import "@nestjs/common";', reject: "@nestjs/common" },
+  { workspace: DOMAIN, source: 'import "@stats/web";', reject: "@stats/web" },
   {
-    workspace: "packages/domain",
+    workspace: DOMAIN,
     source: 'import "@stats/contracts";',
     reject: "@stats/contracts",
   },
-  { workspace: "packages/domain", source: 'import "node:fs";', reject: "node:fs" },
+  { workspace: DOMAIN, source: 'import "node:fs";', reject: "node:fs" },
   {
-    workspace: "packages/domain",
+    workspace: DOMAIN,
     source: "export const now = document.title;",
     reject: "document",
   },
   { workspace: "packages/contracts", source: 'import "@stats/api";', reject: "@stats/api" },
   { workspace: "packages/test-fixtures", source: 'import "@stats/web";', reject: "@stats/web" },
-  { workspace: "apps/web", source: 'import "@stats/domain";\nimport "@stats/contracts";' },
-  { workspace: "apps/api", source: 'import "@stats/domain";\nimport "@stats/contracts";' },
+  { workspace: "apps/web", source: SHARED_IMPORTS },
+  { workspace: "apps/api", source: SHARED_IMPORTS },
   {
     workspace: "packages/test-fixtures",
-    source: 'import "@stats/domain";\nimport "@stats/contracts";',
+    source: SHARED_IMPORTS,
   },
 ];
 
