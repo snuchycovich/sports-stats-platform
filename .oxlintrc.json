@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc"],
+  "jsPlugins": ["eslint-plugin-sonarjs"],
   "categories": {
     "correctness": "error"
   },
@@ -19,6 +20,20 @@
     "**/test-results/**"
   ],
   "overrides": [
+    {
+      "files": ["apps/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}", "scripts/**/*.mjs"],
+      "rules": {
+        "sonarjs/cognitive-complexity": ["error", 15],
+        "sonarjs/no-duplicate-string": [
+          "error",
+          {
+            "threshold": 3
+          }
+        ],
+        "sonarjs/no-identical-functions": "error",
+        "sonarjs/no-nested-conditional": "warn"
+      }
+    },
     {
       "files": ["scripts/**/*.mjs"],
       "env": {
@@ -70,6 +85,12 @@
       "plugins": ["typescript", "unicorn", "oxc", "vitest"],
       "rules": {
         "vitest/no-focused-tests": "error"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "apps/web/e2e/**/*.ts"],
+      "rules": {
+        "sonarjs/no-duplicate-string": "off"
       }
     }
   ]
