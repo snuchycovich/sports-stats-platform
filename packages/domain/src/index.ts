@@ -35,6 +35,8 @@ export type {
   ReceptionSegment,
   RushSegment,
 } from "./play-observation";
+export { validatePlayDraft } from "./play-draft";
+export type { DraftField, DraftIssue, DraftValidationOptions, PlayDraft } from "./play-draft";
 export type { CaptureCompleteness, PlayRevision, ReviewStatus } from "./play-revision";
 export type { PlayerAttribution } from "./player-attribution";
 export type { Down, LineToGain, ObservedContext, Situation } from "./situation";
