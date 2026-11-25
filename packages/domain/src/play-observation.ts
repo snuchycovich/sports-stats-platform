@@ -1,4 +1,5 @@
 import type { PlayerAttribution } from "./player-attribution";
+import type { ObservedContext } from "./situation";
 
 export type RushSegment = {
   readonly kind: "rush";
@@ -27,6 +28,7 @@ type ObservationContext = {
   readonly period: number;
   readonly clockSeconds?: number;
   readonly note?: string;
+  readonly observedContext?: ObservedContext;
 };
 
 /**

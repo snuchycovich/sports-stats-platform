@@ -1,3 +1,18 @@
+export type {
+  CalculateGame,
+  EngineInput,
+  EngineIssue,
+  EngineOutput,
+  EngineVersion,
+  EngineVersionReferences,
+  PassingLine,
+  PlayerStatLine,
+  PlaySituationResult,
+  ReceivingLine,
+  RushingLine,
+  StatSubject,
+  TeamStatLine,
+} from "./engine";
 export { PROTOTYPE_VERSIONS } from "./game-setup";
 export type {
   FieldPosition,
@@ -22,3 +37,4 @@ export type {
 } from "./play-observation";
 export type { CaptureCompleteness, PlayRevision, ReviewStatus } from "./play-revision";
 export type { PlayerAttribution } from "./player-attribution";
+export type { Down, LineToGain, ObservedContext, Situation } from "./situation";

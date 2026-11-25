@@ -9,6 +9,7 @@ import type {
   RushSegment,
 } from "./play-observation";
 import type { PlayerAttribution } from "./player-attribution";
+import type { ObservedContext } from "./situation";
 
 const accept = <T>(value: T): T => value;
 
@@ -133,6 +134,19 @@ describe("PlayObservation", () => {
 
   it("accepts later segments after the primary one", () => {
     expectTypeOf(rushWithFollowUpSegments).toExtend<PlayObservation>();
+  });
+
+  it("accepts an optional observed context on every outcome", () => {
+    expectTypeOf<PlayObservation["observedContext"]>().toEqualTypeOf<ObservedContext | undefined>();
+    accept<PlayObservation>({
+      ...rush,
+      observedContext: { possession: "home", down: 1, distance: "goal" },
+    });
+    accept<PlayObservation>({
+      ...completePass,
+      observedContext: { down: 2, distance: 6, ballPosition: { side: "own", yardLine: 29 } },
+    });
+    accept<PlayObservation>({ ...spike, observedContext: {} });
   });
 
   it("keeps yards, payload version, revision, and IDs off the observation", () => {
