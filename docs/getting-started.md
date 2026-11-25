@@ -6,7 +6,7 @@ Build one vertical proof: prepare a game, record a small rush/pass subset rapidl
 
 ## Blocking decisions before implementation
 
-1. Select one concrete demonstration ruleset and statistical policy for the supported rush/pass examples. Label both as prototype profiles, not official coverage.
+1. Select one concrete demonstration ruleset and statistical policy for the supported rush/pass examples. Label both as prototype profiles, not official coverage. Decided in the [prototype football profile](technical/prototype-football-profile.md).
 2. Define the minimum reference game: teams, roster, starting context, supported observations, one correction, and independently reviewed expected totals.
 3. Choose runtime schemas for the slice. NestJS is the accepted server framework.
 4. Choose the PostgreSQL access approach after a small spike proves transactions, migrations, JSONB mapping, and optimistic updates. The ORM is not otherwise blocking product documentation.

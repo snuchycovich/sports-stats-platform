@@ -1,0 +1,97 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "jsPlugins": ["eslint-plugin-sonarjs"],
+  "categories": {
+    "correctness": "error"
+  },
+  "settings": {
+    "react": {
+      "version": "19"
+    }
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.vite/**",
+    "**/playwright-report/**",
+    "**/test-results/**"
+  ],
+  "overrides": [
+    {
+      "files": ["apps/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}", "scripts/**/*.mjs"],
+      "rules": {
+        "sonarjs/cognitive-complexity": ["error", 15],
+        "sonarjs/no-duplicate-string": [
+          "error",
+          {
+            "threshold": 3
+          }
+        ],
+        "sonarjs/no-identical-functions": "error",
+        "sonarjs/no-nested-conditional": "warn"
+      }
+    },
+    {
+      "files": ["scripts/**/*.mjs"],
+      "env": {
+        "node": true
+      }
+    },
+    {
+      "files": ["packages/domain/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["react", "react-dom", "react/*", "react-dom/*", "@nestjs/*"],
+                "message": "packages/domain must not import UI or server frameworks."
+              },
+              {
+                "group": ["node:*", "@stats/web", "@stats/api"],
+                "message": "packages/domain must not import Node built-ins or applications."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["apps/web/**/*.{ts,tsx}"],
+      "plugins": ["typescript", "unicorn", "oxc", "react"],
+      "env": {
+        "browser": true
+      },
+      "rules": {
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn"
+      }
+    },
+    {
+      "files": ["apps/api/**/*.ts"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "typescript/consistent-type-imports": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "plugins": ["typescript", "unicorn", "oxc", "vitest"],
+      "rules": {
+        "vitest/no-focused-tests": "error"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "apps/web/e2e/**/*.ts"],
+      "rules": {
+        "sonarjs/no-duplicate-string": "off"
+      }
+    }
+  ]
+}
