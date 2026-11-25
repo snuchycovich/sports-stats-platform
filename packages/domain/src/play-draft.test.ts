@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { validatePlayDraft } from "./play-draft";
+import { createPlayObservation, validatePlayDraft } from "./play-draft";
 import type { DraftIssue, PlayDraft } from "./play-draft";
+import type { PlayObservation } from "./play-observation";
 import type { PlayerAttribution } from "./player-attribution";
 
 const accept = <T>(value: T): T => value;
@@ -17,6 +18,9 @@ const deepFreeze = <T>(value: T): T => {
 
 const validate = (draft: PlayDraft, fieldLength = 100) =>
   validatePlayDraft(deepFreeze(draft), { fieldLength });
+
+const create = (draft: PlayDraft, fieldLength = 100) =>
+  createPlayObservation(deepFreeze(draft), { fieldLength });
 
 const quarterback = {
   kind: "identified",
@@ -118,6 +122,18 @@ describe("validatePlayDraft", () => {
     it("requires a ball carrier unless it is a kneel-down", () => {
       expect(validate({ family: "rush", period: 1, yards: 4 })).toStrictEqual([
         { code: "required", field: "ballCarrier" },
+      ]);
+    });
+
+    it("still requires valid yards on a kneel-down", () => {
+      expect(validate({ family: "rush", period: 4, kneelDown: true })).toStrictEqual([
+        { code: "required", field: "yards" },
+      ]);
+      expect(validate({ family: "rush", period: 4, kneelDown: true, yards: -1.5 })).toStrictEqual([
+        { code: "not_integer", field: "yards" },
+      ]);
+      expect(validate({ family: "rush", period: 4, kneelDown: true, yards: -100 })).toStrictEqual([
+        { code: "out_of_range", field: "yards" },
       ]);
     });
 
@@ -295,5 +311,241 @@ describe("validatePlayDraft", () => {
     it("returns the same result for the same draft", () => {
       expect(validate({ ...broken })).toStrictEqual(validate({ ...broken }));
     });
+  });
+});
+
+describe("createPlayObservation", () => {
+  type Result = ReturnType<typeof createPlayObservation>;
+
+  it("returns an observation or a non-empty issue list", () => {
+    expectTypeOf<Extract<Result, { ok: true }>["observation"]>().toEqualTypeOf<PlayObservation>();
+    expectTypeOf<Extract<Result, { ok: false }>["issues"]>().toEqualTypeOf<
+      readonly [DraftIssue, ...DraftIssue[]]
+    >();
+    expectTypeOf<Result["ok"]>().toEqualTypeOf<boolean>();
+  });
+
+  describe("valid drafts", () => {
+    it("builds a rush segment", () => {
+      expect(
+        create({ family: "rush", period: 1, ballCarrier: runningBack, yards: 4 }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "rush",
+          outcome: "rush",
+          period: 1,
+          segments: [{ kind: "rush", ballCarrier: runningBack, yards: 4 }],
+        },
+      });
+    });
+
+    it("builds a reception segment for a complete pass", () => {
+      expect(
+        create({
+          family: "pass",
+          period: 1,
+          outcome: "complete",
+          passer: quarterback,
+          receiver,
+          yards: 27,
+        }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "pass",
+          outcome: "complete",
+          period: 1,
+          segments: [{ kind: "reception", passer: quarterback, receiver, yards: 27 }],
+        },
+      });
+    });
+
+    it("builds an incompletion segment with a target", () => {
+      expect(
+        create({
+          family: "pass",
+          period: 1,
+          outcome: "incomplete",
+          passer: quarterback,
+          target: receiver,
+        }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "pass",
+          outcome: "incomplete",
+          period: 1,
+          segments: [{ kind: "incompletion", passer: quarterback, target: receiver }],
+        },
+      });
+    });
+
+    it("builds an incompletion segment without a target", () => {
+      expect(
+        create({ family: "pass", period: 1, outcome: "incomplete", passer: quarterback }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "pass",
+          outcome: "incomplete",
+          period: 1,
+          segments: [{ kind: "incompletion", passer: quarterback }],
+        },
+      });
+    });
+
+    it("keeps an unknown ball carrier with an observed jersey", () => {
+      expect(
+        create({ family: "rush", period: 1, ballCarrier: unknown33, yards: -3 }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "rush",
+          outcome: "rush",
+          period: 1,
+          segments: [{ kind: "rush", ballCarrier: unknown33, yards: -3 }],
+        },
+      });
+    });
+  });
+
+  describe("clock plays", () => {
+    it("marks a kneel-down and records an unknown carrier when none is given", () => {
+      expect(create({ family: "rush", period: 4, kneelDown: true, yards: -2 })).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "rush",
+          outcome: "rush",
+          marker: "kneelDown",
+          period: 4,
+          segments: [{ kind: "rush", ballCarrier: { kind: "unknown" }, yards: -2 }],
+        },
+      });
+    });
+
+    it("keeps a known carrier on a kneel-down", () => {
+      expect(
+        create({ family: "rush", period: 4, kneelDown: true, ballCarrier: quarterback, yards: -1 }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "rush",
+          outcome: "rush",
+          marker: "kneelDown",
+          period: 4,
+          segments: [{ kind: "rush", ballCarrier: quarterback, yards: -1 }],
+        },
+      });
+    });
+
+    it("marks a spike and records an unknown passer without a target", () => {
+      expect(
+        create({ family: "pass", period: 2, outcome: "incomplete", spike: true }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "pass",
+          outcome: "incomplete",
+          marker: "spike",
+          period: 2,
+          segments: [{ kind: "incompletion", passer: { kind: "unknown" } }],
+        },
+      });
+    });
+  });
+
+  describe("context and markers", () => {
+    it("copies period, clock, and note", () => {
+      expect(
+        create({
+          family: "rush",
+          period: 2,
+          clockSeconds: 0,
+          note: "Wildcat",
+          ballCarrier: runningBack,
+          yards: 1,
+        }),
+      ).toStrictEqual({
+        ok: true,
+        observation: {
+          family: "rush",
+          outcome: "rush",
+          period: 2,
+          clockSeconds: 0,
+          note: "Wildcat",
+          segments: [{ kind: "rush", ballCarrier: runningBack, yards: 1 }],
+        },
+      });
+    });
+
+    it("leaves absent context keys and false markers out", () => {
+      const rush = create({
+        family: "rush",
+        period: 1,
+        kneelDown: false,
+        ballCarrier: runningBack,
+        yards: 4,
+      });
+      const pass = create({
+        family: "pass",
+        period: 1,
+        outcome: "incomplete",
+        spike: false,
+        passer: quarterback,
+      });
+
+      for (const result of [rush, pass]) {
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+          expect(Object.keys(result.observation).sort()).toStrictEqual([
+            "family",
+            "outcome",
+            "period",
+            "segments",
+          ]);
+        }
+      }
+    });
+  });
+
+  describe("invalid drafts", () => {
+    it.each<{ name: string; draft: PlayDraft; fieldLength: number }>([
+      {
+        name: "a rush without carrier or yards",
+        draft: { family: "rush", period: 1 },
+        fieldLength: 100,
+      },
+      {
+        name: "a kneel-down without yards",
+        draft: { family: "rush", period: 4, kneelDown: true },
+        fieldLength: 100,
+      },
+      {
+        name: "a pass without an outcome",
+        draft: { family: "pass", period: 1, passer: quarterback },
+        fieldLength: 100,
+      },
+      {
+        name: "a complete pass with several problems",
+        draft: { family: "pass", period: 0, outcome: "complete", target: receiver, yards: 4.5 },
+        fieldLength: 100,
+      },
+      {
+        name: "yards beyond a short field",
+        draft: { family: "rush", period: 1, ballCarrier: runningBack, yards: 80 },
+        fieldLength: 80,
+      },
+    ])("returns exactly the validation issues for $name", ({ draft, fieldLength }) => {
+      const issues = validate(draft, fieldLength);
+
+      expect(issues.length).toBeGreaterThan(0);
+      expect(create(draft, fieldLength)).toStrictEqual({ ok: false, issues });
+    });
+  });
+
+  it("returns the same result for the same draft", () => {
+    const draft = { family: "rush", period: 1, ballCarrier: runningBack, yards: 4 } as const;
+    expect(create({ ...draft })).toStrictEqual(create({ ...draft }));
   });
 });

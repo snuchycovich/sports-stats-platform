@@ -1,3 +1,4 @@
+import type { PlayObservation } from "./play-observation";
 import type { PlayerAttribution } from "./player-attribution";
 
 type DraftContext = {
@@ -139,3 +140,100 @@ export const validatePlayDraft = (
   ...contextIssues(draft),
   ...(draft.family === "rush" ? rushIssues(draft, fieldLength) : passIssues(draft, fieldLength)),
 ];
+
+export type CreatePlayObservationResult =
+  | { readonly ok: true; readonly observation: PlayObservation }
+  | { readonly ok: false; readonly issues: readonly [DraftIssue, ...DraftIssue[]] };
+
+const unknownPlayer: PlayerAttribution = { kind: "unknown" };
+
+const missingYards: CreatePlayObservationResult = {
+  ok: false,
+  issues: [{ code: "required", field: "yards" }],
+};
+
+const observationContext = (draft: PlayDraft) => ({
+  period: draft.period,
+  ...(draft.clockSeconds === undefined ? {} : { clockSeconds: draft.clockSeconds }),
+  ...(draft.note === undefined ? {} : { note: draft.note }),
+});
+
+const rushObservation = (draft: RushDraft): CreatePlayObservationResult => {
+  if (draft.yards === undefined) {
+    return missingYards;
+  }
+  return {
+    ok: true,
+    observation: {
+      family: "rush",
+      outcome: "rush",
+      ...(draft.kneelDown === true ? { marker: "kneelDown" } : {}),
+      ...observationContext(draft),
+      segments: [
+        { kind: "rush", ballCarrier: draft.ballCarrier ?? unknownPlayer, yards: draft.yards },
+      ],
+    },
+  };
+};
+
+const completePassObservation = (draft: PassDraft): CreatePlayObservationResult => {
+  if (draft.yards === undefined) {
+    return missingYards;
+  }
+  return {
+    ok: true,
+    observation: {
+      family: "pass",
+      outcome: "complete",
+      ...observationContext(draft),
+      segments: [
+        {
+          kind: "reception",
+          passer: draft.passer ?? unknownPlayer,
+          receiver: draft.receiver ?? unknownPlayer,
+          yards: draft.yards,
+        },
+      ],
+    },
+  };
+};
+
+const incompletePassObservation = (draft: PassDraft): CreatePlayObservationResult => ({
+  ok: true,
+  observation: {
+    family: "pass",
+    outcome: "incomplete",
+    ...(draft.spike === true ? { marker: "spike" } : {}),
+    ...observationContext(draft),
+    segments: [
+      {
+        kind: "incompletion",
+        passer: draft.passer ?? unknownPlayer,
+        ...(draft.target === undefined ? {} : { target: draft.target }),
+      },
+    ],
+  },
+});
+
+const toObservation = (draft: PlayDraft): CreatePlayObservationResult => {
+  if (draft.family === "rush") {
+    return rushObservation(draft);
+  }
+  return draft.outcome === "complete"
+    ? completePassObservation(draft)
+    : incompletePassObservation(draft);
+};
+
+/**
+ * Validates a capture draft and builds its observation with the first segment matching the
+ * outcome, so callers never assemble segments. A missing kneel-down carrier or spike passer is
+ * recorded as an unknown player. An invalid draft returns exactly the `validatePlayDraft` issues.
+ * See docs/adr/ADR-002-segmented-play-observation.md, decision 2.
+ */
+export const createPlayObservation = (
+  draft: PlayDraft,
+  options: DraftValidationOptions,
+): CreatePlayObservationResult => {
+  const [first, ...rest] = validatePlayDraft(draft, options);
+  return first === undefined ? toObservation(draft) : { ok: false, issues: [first, ...rest] };
+};
