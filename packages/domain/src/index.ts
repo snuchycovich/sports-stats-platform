@@ -11,4 +11,13 @@ export type {
   TeamSide,
   VersionReferences,
 } from "./game-setup";
+export type {
+  IncompletionSegment,
+  PlayMarker,
+  PlayObservation,
+  PlayObservationV1,
+  PlaySegment,
+  ReceptionSegment,
+  RushSegment,
+} from "./play-observation";
 export type { PlayerAttribution } from "./player-attribution";
