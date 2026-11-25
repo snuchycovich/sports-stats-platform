@@ -20,4 +20,5 @@ export type {
   ReceptionSegment,
   RushSegment,
 } from "./play-observation";
+export type { CaptureCompleteness, PlayRevision, ReviewStatus } from "./play-revision";
 export type { PlayerAttribution } from "./player-attribution";
