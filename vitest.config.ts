@@ -8,6 +8,11 @@ export default defineConfig({
           name: "unit",
           environment: "node",
           include: ["packages/*/src/**/*.test.ts"],
+          typecheck: {
+            enabled: true,
+            include: ["packages/*/src/**/*.test.ts"],
+            tsconfig: "tsconfig.unit.json",
+          },
         },
       },
       {

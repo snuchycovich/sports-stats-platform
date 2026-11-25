@@ -11,3 +11,4 @@ export type {
   TeamSide,
   VersionReferences,
 } from "./game-setup";
+export type { PlayerAttribution } from "./player-attribution";
