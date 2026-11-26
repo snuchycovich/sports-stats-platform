@@ -3,7 +3,8 @@ import { z } from "zod";
 import { toContractResult } from "./contract-result";
 import type { ContractResult } from "./contract-result";
 
-const playerAttributionSchema = z.discriminatedUnion("kind", [
+/** Package-internal: reused by other schemas, never re-exported from the package index. */
+export const playerAttributionSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("identified"), playerId: z.string() }),
   z.strictObject({
     kind: z.literal("unknown"),
