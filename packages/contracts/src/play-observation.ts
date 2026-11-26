@@ -52,7 +52,8 @@ const observationContextShape = {
   observedContext: observedContextSchema.exactOptional(),
 };
 
-const playObservationSchema = z.discriminatedUnion("outcome", [
+/** Package-internal: reused by the revision envelope, never re-exported from the package index. */
+export const playObservationSchema = z.discriminatedUnion("outcome", [
   z.strictObject({
     ...observationContextShape,
     family: z.literal("rush"),

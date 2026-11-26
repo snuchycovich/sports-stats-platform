@@ -18,6 +18,11 @@ export type ContractResult<T> =
 const toPath = (path: readonly PropertyKey[]): readonly (string | number)[] =>
   path.map((key) => (typeof key === "symbol" ? key.toString() : key));
 
+const contractCodeOf = (issue: z.core.$ZodIssue): string => {
+  const contractCode: unknown = issue.code === "custom" ? issue.params?.["code"] : undefined;
+  return typeof contractCode === "string" ? contractCode : issue.code;
+};
+
 const toIssues = (issue: z.core.$ZodIssue): readonly ContractIssue[] => {
   const path = toPath(issue.path);
   if (issue.code === "unrecognized_keys") {
@@ -27,11 +32,24 @@ const toIssues = (issue: z.core.$ZodIssue): readonly ContractIssue[] => {
       message: issue.message,
     }));
   }
-  return [{ path, code: issue.code, message: issue.message }];
+  return [{ path, code: contractCodeOf(issue), message: issue.message }];
+};
+
+/** Adds an issue from a schema refinement; it is reported with the given contract code. */
+export const addContractIssue = (
+  ctx: z.RefinementCtx,
+  code: string,
+  path: readonly (string | number)[],
+  message: string,
+): void => {
+  ctx.addIssue({ code: "custom", path: [...path], message, params: { code } });
 };
 
 /** Maps schema library issues to contract issues; an unexpected key is reported at its own path. */
+export const toContractIssues = (error: z.ZodError): readonly ContractIssue[] =>
+  error.issues.flatMap(toIssues);
+
 export const toContractResult = <T>(result: z.ZodSafeParseResult<T>): ContractResult<T> =>
   result.success
     ? { ok: true, value: result.data }
-    : { ok: false, issues: result.error.issues.flatMap(toIssues) };
+    : { ok: false, issues: toContractIssues(result.error) };
