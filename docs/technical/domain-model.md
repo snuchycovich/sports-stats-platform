@@ -61,6 +61,8 @@ Materialized projections record `sourceGameRevision`, ruleset version, statistic
 
 These references must not be collapsed. A ruleset contains data and, where necessary, versioned behavior; it is not assumed to be fully expressible as JSON. Historical games retain their selected versions. Old play payloads are read through versioned adapters or controlled migrations.
 
+The first slice uses the versions defined in the [prototype football profile](prototype-football-profile.md).
+
 ## Core invariants
 
 - Home and away teams are distinct, and every identified contributor belongs to the game roster and acting team.

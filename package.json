@@ -1,6 +1,7 @@
 {
   "name": "sports-stats-platform",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "pnpm -r --if-present run build",
     "test": "vitest run",

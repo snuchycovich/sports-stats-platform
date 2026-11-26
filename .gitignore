@@ -29,3 +29,6 @@ pnpm-debug.log*
 .vscode/
 *.swp
 .DS_Store
+
+# Temporary docs/issues
+docs/github-issues/

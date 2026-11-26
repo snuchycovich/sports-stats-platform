@@ -11,6 +11,7 @@
     "test-results/**",
     "pnpm-lock.yaml",
     "docs/**",
-    ".github/**"
+    ".github/**",
+    ".agents/skills/**"
   ]
 }
