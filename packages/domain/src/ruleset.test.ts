@@ -4,13 +4,20 @@ import type { RulesetVersion } from "./game-setup";
 import { PROTOTYPE_RULESET, findRuleset, maxYardLine } from "./ruleset";
 import type { Ruleset } from "./ruleset";
 
-const youthRuleset: Ruleset = { version: "youth-tackle/0.1.0", fieldLength: 80 };
+const youthRuleset: Ruleset = {
+  version: "youth-tackle/0.1.0",
+  fieldLength: 80,
+  downsPerSeries: 4,
+  seriesYards: 10,
+};
 
 describe("Ruleset", () => {
-  it("names its version and field length", () => {
+  it("names its version, field length, downs per series, and series yards", () => {
     expectTypeOf<Ruleset>().toEqualTypeOf<{
       readonly version: RulesetVersion;
       readonly fieldLength: number;
+      readonly downsPerSeries: number;
+      readonly seriesYards: number;
     }>();
   });
 
@@ -18,16 +25,22 @@ describe("Ruleset", () => {
     const mutate = (ruleset: Ruleset): void => {
       // @ts-expect-error fieldLength is readonly
       ruleset.fieldLength = 80;
+      // @ts-expect-error downsPerSeries is readonly
+      ruleset.downsPerSeries = 3;
+      // @ts-expect-error seriesYards is readonly
+      ruleset.seriesYards = 15;
     };
     expectTypeOf(mutate).toBeFunction();
   });
 });
 
 describe("PROTOTYPE_RULESET", () => {
-  it("is the 100-yard prototype ruleset referenced by PROTOTYPE_VERSIONS", () => {
+  it("is the 100-yard, 4-down, 10-yard prototype ruleset referenced by PROTOTYPE_VERSIONS", () => {
     expect(PROTOTYPE_RULESET).toStrictEqual({
       version: PROTOTYPE_VERSIONS.ruleset,
       fieldLength: 100,
+      downsPerSeries: 4,
+      seriesYards: 10,
     });
   });
 

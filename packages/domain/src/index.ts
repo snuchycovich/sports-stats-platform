@@ -54,4 +54,5 @@ export type { CaptureCompleteness, PlayRevision, ReviewStatus } from "./play-rev
 export type { PlayerAttribution } from "./player-attribution";
 export { PROTOTYPE_RULESET, findRuleset, maxYardLine } from "./ruleset";
 export type { Ruleset } from "./ruleset";
+export { distanceToGain, initialSituation, lineToGainFrom } from "./series";
 export type { Down, LineToGain, ObservedContext, Situation } from "./situation";
