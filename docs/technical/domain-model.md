@@ -18,7 +18,7 @@ The first implementation should model only the segment types required by the pro
 
 ## Field position and yards
 
-Ball position is recorded as people say it, from the point of view of the team in possession at the snap: `own` or `opponent` plus a yard line, or `midfield`. Yard lines are whole numbers from 1 to half the field length minus 1; the middle line is always `midfield`, never "own 50". The field length comes from the ruleset, so flag fields shorter than 100 yards use the same convention. Distance to gain must be at least 1 and cannot exceed the yards to the opponent's goal line.
+Ball position is recorded as people say it, from the point of view of the team in possession at the snap: `own` or `opponent` plus a yard line, or `midfield`. Yard lines are whole numbers from 1 to half the field length minus 1; the middle line is always `midfield`, never "own 50". The field length comes from the ruleset, so flag fields shorter than 100 yards use the same convention. The ruleset also sets the downs per series (`downsPerSeries`) and the yards to gain when a series starts (`seriesYards`); the prototype ruleset uses 4 and 10. Distance to gain must be at least 1 and cannot exceed the yards to the opponent's goal line.
 
 Yards belong to segments and are whole numbers: a run or a complete pass requires them, an incomplete pass has none. Net play yards are derived. Until the situation engine bounds yards by ball position, a play accepts from −(field length − 1) to field length − 1 yards.
 
@@ -45,7 +45,9 @@ Game capture and statistical approval have separate lifecycles:
 
 Capture may close with unresolved plays. `UncertaintySummary` contains a unique `playCount`, affected play IDs, and counts by reason such as `missing_details`, `unresolved_identity`, `inconsistent_consequence`, `sync_conflict`, and `pending_delivery`. A play may have multiple reasons, so reason counts need not sum to `playCount`. Closing capture preserves pending commands and leaves Review Mode available.
 
-A correction creates a revision rather than deleting history. The current ordered play versions form the calculation input; retained revisions explain who changed what, when, and why. Insertion or correction may invalidate the expected context of later plays. The engine must return explicit issues and require human resolution; recalculation must not rewrite a contradictory observation to fit the new state.
+A correction creates a revision rather than deleting history. The current ordered play versions form the calculation input; retained revisions explain who changed what, when, and why. Insertion or correction may invalidate the expected context of later plays. The engine must return explicit issues and require human resolution; recalculation must not rewrite a contradictory observation to fit the new state. After a contradiction, calculation continues from a complete observed context, because the officials' spot and down set the actual flow of the game.
+
+A play's credits, including its first down, go to the team in its observed possession when one is recorded, otherwise to the calculated possession before the play. A play with neither is not credited and is reported as `missing_details`.
 
 Materialized projections record `sourceGameRevision`, ruleset version, statistical-policy version, engine version, and computation time. They may be rebuilt and replaced only when their source revision is current.
 
@@ -76,6 +78,6 @@ The first slice uses the versions defined in the [prototype football profile](pr
 
 ## Initial engine contract
 
-The pure TypeScript engine accepts initial context, ordered current plays, a ruleset, and a statistical policy. It returns game state, player and team statistics, scoring, and issues. Time, identifiers, persistence, authorization, and external services are supplied outside the engine.
+The pure TypeScript engine, `calculateGame`, accepts the game setup (initial context and version references), the current plays, and a ruleset. It orders the plays by `orderKey` and returns the versions it applied, the situation before and after each play, player and team statistics, and issues. The statistical policy is referenced by version only: the prototype applies a single policy, so it is not passed as data. Scoring is not calculated yet; touchdowns and safeties are reported as `unsupported_consequence`. Time, identifiers, persistence, authorization, and external services are supplied outside the engine.
 
 Reference games must be approved independently of the implementation. A test oracle generated only by the same algorithm cannot validate the algorithm.

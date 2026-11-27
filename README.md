@@ -39,7 +39,7 @@ pnpm check:quality
 ```
 
 - `pnpm build` runs the matching script in every workspace that defines it, and skips the rest.
-- `pnpm test` runs the Vitest unit and API integration projects defined in `vitest.config.ts`. `pnpm test:unit` and `pnpm test:api` run one project each. Unit tests live in `packages/*/src/**/*.test.ts` and API integration tests in `apps/api/src/**/*.int.test.ts`.
+- `pnpm test` runs the Vitest unit and API integration projects defined in `vitest.config.ts`. `pnpm test:unit` and `pnpm test:api` run one project each. Unit tests live in `packages/*/src/**/*.test.ts` and API integration tests in `apps/api/src/**/*.int.test.ts`. The unit project also type-checks its test files with `tsconfig.unit.json`, so `expectTypeOf` and `// @ts-expect-error` assertions fail the run.
 - `pnpm test:e2e` runs the Playwright end-to-end tests in `apps/web/e2e` in Chromium. It is not part of `pnpm test`, because it needs the browser download.
 - Component tests (React Testing Library) are not configured yet.
 - `pnpm lint` runs Oxlint on the whole repository with one root configuration (`.oxlintrc.json`, `correctness` rules as errors), including React rules for `apps/web`, Node rules for `apps/api`, and import restrictions for `packages/domain`. It also applies four SonarJS rules (loaded as an Oxlint JS plugin, which is in alpha) to `apps/`, `packages/`, and `scripts/`: `cognitive-complexity` (max 15), `no-duplicate-string` (threshold 3, not applied to tests), `no-identical-functions`, and `no-nested-conditional` (warning only). `eslint-plugin-sonarjs` declares `eslint` as a peer dependency, so pnpm installs ESLint transitively. It is not used for linting.
