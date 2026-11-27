@@ -1,3 +1,4 @@
+export { ENGINE_VERSION, calculateGame } from "./calculate-game";
 export type {
   CalculateGame,
   EngineInput,

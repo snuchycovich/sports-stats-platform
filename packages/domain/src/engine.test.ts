@@ -17,6 +17,7 @@ import type {
 import { PROTOTYPE_VERSIONS } from "./game-setup";
 import type { FieldPosition, GameSetup, VersionReferences } from "./game-setup";
 import type { PlayRevision } from "./play-revision";
+import type { Ruleset } from "./ruleset";
 import type { Situation } from "./situation";
 
 const accept = <T>(value: T): T => value;
@@ -256,8 +257,10 @@ describe("EngineOutput", () => {
 });
 
 describe("CalculateGame", () => {
-  it("maps an engine input to an engine output", () => {
-    expectTypeOf<CalculateGame>().parameters.toEqualTypeOf<[input: EngineInput]>();
+  it("maps an engine input and a ruleset to an engine output", () => {
+    expectTypeOf<CalculateGame>().parameters.toEqualTypeOf<
+      [input: EngineInput, ruleset: Ruleset]
+    >();
     expectTypeOf<CalculateGame>().returns.toEqualTypeOf<EngineOutput>();
   });
 });
