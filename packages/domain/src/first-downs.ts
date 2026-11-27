@@ -74,6 +74,8 @@ const earnsFirstDown = (
  * First downs of the ordered plays: a play that starts a new series for the same team, or a
  * touchdown whose series started at least the series yards from the opponent's goal line. A
  * safety, a turnover on downs, and a play with an unknown situation or series start earn none.
+ * A first down is credited to the observed possession when present, otherwise to the calculated
+ * one, like the play's other credits.
  * See docs/technical/prototype-football-profile.md, "Credits".
  */
 export const firstDowns = (
@@ -83,7 +85,7 @@ export const firstDowns = (
 ): readonly FirstDownCredit[] =>
   progression.plays.flatMap((result, index) => {
     const observation = plays.find(({ playId }) => playId === result.playId)?.observation;
-    const team = result.before?.possession;
+    const team = observation?.observedContext?.possession ?? result.before?.possession;
     if (
       observation === undefined ||
       team === undefined ||

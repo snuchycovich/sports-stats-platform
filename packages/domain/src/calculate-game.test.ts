@@ -210,6 +210,50 @@ describe("calculateGame", () => {
     });
   });
 
+  describe("credited team", () => {
+    it("prefers the observed possession over the calculated one", () => {
+      const result = calculate(startAt(own(25)), log(rush(awayRunner, 6, { possession: "away" })));
+
+      expect(result.playerStats).toStrictEqual([
+        rushLine({ kind: "player", playerId: "away-1" }, 1, 6, "away"),
+      ]);
+      expect(result.teamStats).toStrictEqual({
+        home: zeroTotals("home"),
+        away: {
+          ...zeroTotals("away"),
+          rushing: { attempts: 1, yards: 6 },
+          totalOffenseYards: 6,
+        },
+      });
+      expect(result.issues).toStrictEqual([issue("inconsistent_consequence", "p1")]);
+    });
+
+    it("uses the calculated possession when none is observed", () => {
+      const result = calculate(startAt(own(25)), log(rush(runningBack, 4, { down: 1 })));
+
+      expect(result.playerStats).toStrictEqual([
+        rushLine({ kind: "player", playerId: "home-22" }, 1, 4),
+      ]);
+      expect(result.teamStats.home.rushing).toStrictEqual({ attempts: 1, yards: 4 });
+      expect(result.teamStats.away).toStrictEqual(zeroTotals("away"));
+      expect(result.issues).toStrictEqual([]);
+    });
+
+    it("uses the observed possession when no situation is calculated", () => {
+      const result = calculate(
+        startAt(opponent(20)),
+        log(rush(runningBack, 20), rush(awayRunner, 6, { possession: "away" })),
+      );
+
+      expect(result.plays[1]).toStrictEqual({ playId: "p2", before: null, after: null });
+      expect(result.playerStats).toStrictEqual([
+        rushLine({ kind: "player", playerId: "home-22" }, 1, 20),
+        rushLine({ kind: "player", playerId: "away-1" }, 1, 6, "away"),
+      ]);
+      expect(result.issues).toStrictEqual([issue("unsupported_consequence", "p1")]);
+    });
+  });
+
   describe("issues", () => {
     it("reports an unresolved identity for an unknown required actor", () => {
       const result = calculate(startAt(own(25)), log(rush(unknown33, -3)));

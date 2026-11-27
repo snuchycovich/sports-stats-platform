@@ -22,7 +22,7 @@ const creditsOf = (
   before: Situation | null,
   observation: PlayObservation,
 ): PlayCredits => {
-  const team: TeamSide | undefined = before?.possession ?? observation.observedContext?.possession;
+  const team: TeamSide | undefined = observation.observedContext?.possession ?? before?.possession;
   if (team === undefined) {
     return { lines: [], issues: [issue("missing_details", playId)] };
   }
@@ -36,8 +36,9 @@ const compareStrings = (a: string, b: string): number => (a < b ? -1 : Number(a 
 
 /**
  * Calculates the situations, statistics, and issues of a game from its setup and current plays.
- * A play is credited to the team in possession before it, or to its observed possession when no
- * situation was calculated; with neither, it is not credited and reports `missing_details`.
+ * A play is credited to its observed possession when present, otherwise to the calculated
+ * possession before it; with neither, it is not credited and reports `missing_details`. A
+ * contradicted possession is still reported as `inconsistent_consequence`.
  * See docs/technical/domain-model.md, "Initial engine contract".
  */
 export const calculateGame: CalculateGame = (input, ruleset) => {
