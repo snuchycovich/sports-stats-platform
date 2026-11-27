@@ -52,6 +52,8 @@ export type {
 } from "./play-draft";
 export type { CaptureCompleteness, PlayRevision, ReviewStatus } from "./play-revision";
 export type { PlayerAttribution } from "./player-attribution";
+export { netYards, nextSituation } from "./progression";
+export type { SituationProgress } from "./progression";
 export { PROTOTYPE_RULESET, findRuleset, maxYardLine } from "./ruleset";
 export type { Ruleset } from "./ruleset";
 export { distanceToGain, initialSituation, lineToGainFrom } from "./series";
