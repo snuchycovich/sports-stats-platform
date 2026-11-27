@@ -42,6 +42,7 @@ export type {
   ReceptionSegment,
   RushSegment,
 } from "./play-observation";
+export { creditPlay, identityIssueNeeded } from "./play-credits";
 export { createPlayObservation, validatePlayDraft } from "./play-draft";
 export type {
   CreatePlayObservationResult,
