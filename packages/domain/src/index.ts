@@ -57,4 +57,6 @@ export type { SituationProgress } from "./progression";
 export { PROTOTYPE_RULESET, findRuleset, maxYardLine } from "./ruleset";
 export type { Ruleset } from "./ruleset";
 export { distanceToGain, initialSituation, lineToGainFrom } from "./series";
+export { progressSituations } from "./situation-progression";
+export type { SituationProgression } from "./situation-progression";
 export type { Down, LineToGain, ObservedContext, Situation } from "./situation";
