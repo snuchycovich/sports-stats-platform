@@ -1,3 +1,4 @@
+export { ENGINE_VERSION, calculateGame } from "./calculate-game";
 export type {
   CalculateGame,
   EngineInput,
@@ -13,6 +14,8 @@ export type {
   StatSubject,
   TeamStatLine,
 } from "./engine";
+export { firstDowns } from "./first-downs";
+export type { FirstDownCredit } from "./first-downs";
 export {
   advanceBall,
   fromYardsFromOwnGoal,
@@ -42,6 +45,7 @@ export type {
   ReceptionSegment,
   RushSegment,
 } from "./play-observation";
+export { creditPlay, identityIssueNeeded } from "./play-credits";
 export { createPlayObservation, validatePlayDraft } from "./play-draft";
 export type {
   CreatePlayObservationResult,
@@ -58,5 +62,7 @@ export { PROTOTYPE_RULESET, findRuleset, maxYardLine } from "./ruleset";
 export type { Ruleset } from "./ruleset";
 export { distanceToGain, initialSituation, lineToGainFrom } from "./series";
 export { progressSituations } from "./situation-progression";
+export { aggregateStatistics } from "./statistics";
+export type { GameStatistics } from "./statistics";
 export type { SituationProgression } from "./situation-progression";
 export type { Down, LineToGain, ObservedContext, Situation } from "./situation";

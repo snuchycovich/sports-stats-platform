@@ -75,7 +75,7 @@ const spike: PlayObservation = {
   segments: [{ kind: "incompletion", passer: team }],
 };
 
-const catchAndRun: PlayObservation = {
+const twoSegmentPlay: PlayObservation = {
   family: "pass",
   outcome: "complete",
   period: 1,
@@ -101,7 +101,7 @@ describe("netYards", () => {
     { name: "an incomplete pass", observation: incomplete, yards: 0 },
     { name: "a −2 kneel-down", observation: kneelDown(-2), yards: -2 },
     { name: "a spike", observation: spike, yards: 0 },
-    { name: "a 10-yard catch and 5-yard run", observation: catchAndRun, yards: 15 },
+    { name: "a play with segments of 10 and 5 yards", observation: twoSegmentPlay, yards: 15 },
   ])("is $yards for $name", ({ observation, yards }) => {
     expect(netYards(deepFreeze(observation))).toBe(yards);
   });

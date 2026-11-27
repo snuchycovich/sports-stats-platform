@@ -1,5 +1,6 @@
 import type { GameSetup, TeamSide, VersionReferences } from "./game-setup";
 import type { PlayRevision } from "./play-revision";
+import type { Ruleset } from "./ruleset";
 import type { Situation } from "./situation";
 
 /** See docs/technical/domain-model.md, "Three independent versions". */
@@ -106,5 +107,8 @@ export type EngineOutput = {
   readonly issues: readonly EngineIssue[];
 };
 
-/** Pure engine entry point. See docs/technical/domain-model.md, "Initial engine contract". */
-export type CalculateGame = (input: EngineInput) => EngineOutput;
+/**
+ * Pure engine entry point, calculated under the given ruleset.
+ * See docs/technical/domain-model.md, "Initial engine contract".
+ */
+export type CalculateGame = (input: EngineInput, ruleset: Ruleset) => EngineOutput;
