@@ -45,7 +45,7 @@ Game capture and statistical approval have separate lifecycles:
 
 Capture may close with unresolved plays. `UncertaintySummary` contains a unique `playCount`, affected play IDs, and counts by reason such as `missing_details`, `unresolved_identity`, `inconsistent_consequence`, `sync_conflict`, and `pending_delivery`. A play may have multiple reasons, so reason counts need not sum to `playCount`. Closing capture preserves pending commands and leaves Review Mode available.
 
-A correction creates a revision rather than deleting history. The current ordered play versions form the calculation input; retained revisions explain who changed what, when, and why. Insertion or correction may invalidate the expected context of later plays. The engine must return explicit issues and require human resolution; recalculation must not rewrite a contradictory observation to fit the new state.
+A correction creates a revision rather than deleting history. The current ordered play versions form the calculation input; retained revisions explain who changed what, when, and why. Insertion or correction may invalidate the expected context of later plays. The engine must return explicit issues and require human resolution; recalculation must not rewrite a contradictory observation to fit the new state. After a contradiction, calculation continues from a complete observed context, because the officials' spot and down set the actual flow of the game.
 
 Materialized projections record `sourceGameRevision`, ruleset version, statistical-policy version, engine version, and computation time. They may be rebuilt and replaced only when their source revision is current.
 

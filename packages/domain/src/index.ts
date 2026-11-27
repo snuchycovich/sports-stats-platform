@@ -1,4 +1,5 @@
 export { ENGINE_VERSION, calculateGame } from "./calculate-game";
+export { selectCurrentPlays } from "./current-plays";
 export type {
   CalculateGame,
   EngineInput,

@@ -158,6 +158,26 @@ describe("firstDowns", () => {
     });
   });
 
+  describe("credited team", () => {
+    it("credits the observed possession when it differs from the calculated one", () => {
+      expect(
+        creditFirstDowns(startAt(own(25)), log(rush(12, { possession: "away" }))),
+      ).toStrictEqual([earned("p1", "rushing", "away")]);
+    });
+
+    it("credits the calculated possession when none is observed", () => {
+      expect(creditFirstDowns(startAt(own(25)), log(rush(12, { down: 1 })))).toStrictEqual([
+        earned("p1", "rushing"),
+      ]);
+    });
+
+    it("credits no first down to a turnover on downs, even with an observed possession", () => {
+      const plays = log(rush(0), rush(0), rush(0), rush(2, { possession: "away" }));
+
+      expect(creditFirstDowns(startAt(opponent(20)), plays)).toStrictEqual([]);
+    });
+  });
+
   describe("turnover on downs", () => {
     it("credits no team with the new series it starts", () => {
       const plays = log(rush(0), rush(0), rush(0), rush(2));
