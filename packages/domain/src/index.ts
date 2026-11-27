@@ -13,6 +13,13 @@ export type {
   StatSubject,
   TeamStatLine,
 } from "./engine";
+export {
+  advanceBall,
+  fromYardsFromOwnGoal,
+  reverseField,
+  toYardsFromOwnGoal,
+} from "./field-position";
+export type { BallAdvance } from "./field-position";
 export { PROTOTYPE_VERSIONS } from "./game-setup";
 export type {
   FieldPosition,
