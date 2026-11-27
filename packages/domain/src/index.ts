@@ -67,3 +67,5 @@ export { aggregateStatistics } from "./statistics";
 export type { GameStatistics } from "./statistics";
 export type { SituationProgression } from "./situation-progression";
 export type { Down, LineToGain, ObservedContext, Situation } from "./situation";
+export { summarizeUncertainty } from "./uncertainty-summary";
+export type { DeliveryStatus, UncertaintyReason, UncertaintySummary } from "./uncertainty-summary";
